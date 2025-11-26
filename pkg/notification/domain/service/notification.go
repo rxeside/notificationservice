@@ -10,7 +10,6 @@ import (
 
 type NotificationService interface {
 	SendNotification(userID uuid.UUID, title, message string) (uuid.UUID, error)
-	// В будущем можно добавить MarkAsRead
 }
 
 func NewNotificationService(repo model.NotificationRepository) NotificationService {

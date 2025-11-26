@@ -20,7 +20,7 @@ type Service struct {
 }
 
 type Database struct {
-	Notification          string        `envconfig:"notification" required:"true"`
+	Notification          string        `envconfig:"user" required:"true"`
 	Password              string        `envconfig:"password" required:"true"`
 	Host                  string        `envconfig:"host" required:"true"`
 	Name                  string        `envconfig:"name" required:"true"`

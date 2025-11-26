@@ -50,7 +50,6 @@ func (r *notificationRepository) FindAll(spec model.FindSpec) ([]model.Notificat
 	}
 	query, args := r.buildSpecArgs(spec)
 
-	// ORDER BY created_at DESC - чтобы новые были сверху
 	err := r.client.SelectContext(
 		r.ctx,
 		&dtos,
@@ -80,7 +79,6 @@ func (r *notificationRepository) buildSpecArgs(spec model.FindSpec) (query strin
 		parts = append(parts, "user_id = ?")
 		args = append(args, *spec.UserID)
 	}
-	// Заглушка, если фильтров нет (чтобы SQL не ломался), хотя для UserID required обычно
 	if len(parts) == 0 {
 		return "1=1", nil
 	}

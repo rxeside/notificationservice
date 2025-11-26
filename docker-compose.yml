@@ -18,7 +18,7 @@ services:
       notificationservice-db:
         condition: service_healthy
     networks:
-      - notificationservice-net
+      - app-tier
 
   notificationservice-message-handler:
     image: notificationservice
@@ -43,7 +43,7 @@ services:
       notificationservice-rmq:
         condition: service_healthy
     networks:
-      - notificationservice-net
+      - app-tier
 
   notificationservice-db:
     image: "mysql:8.3"
@@ -63,7 +63,7 @@ services:
       interval: 10s
       timeout: 30s
     networks:
-      - notificationservice-net
+      - app-tier
 
   notificationservice-rmq:
     image: "rabbitmq:4.2.0-management-alpine"
@@ -79,15 +79,12 @@ services:
       timeout: 3s
       retries: 30
     networks:
-      - notificationservice-net
+      - app-tier
 
 volumes:
   notificationservice-db-data:
   notificationservice-rmq-data:
 
 networks:
-  notificationservice-net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.30.5.0/24
+  app-tier:
+    external: true

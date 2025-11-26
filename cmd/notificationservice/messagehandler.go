@@ -50,8 +50,6 @@ func messageHandler(logger logging.Logger) *cli.Command {
 				return amqpConnection.Stop()
 			}))
 
-			// Тут будет Consumer для событий Order/User
-
 			errGroup := errgroup.Group{}
 			errGroup.Go(func() error {
 				router := mux.NewRouter()

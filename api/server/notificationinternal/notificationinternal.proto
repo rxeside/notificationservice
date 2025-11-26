@@ -4,9 +4,7 @@ package Notification;
 option go_package = "/.;notificationinternal";
 
 service NotificationInternalService {
-  // Метод для ручной отправки (или тестирования)
   rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse);
-  // Получить историю уведомлений пользователя
   rpc ListNotifications(ListNotificationsRequest) returns (ListNotificationsResponse);
 }
 
@@ -33,5 +31,5 @@ message NotificationItem {
   string userID = 2;
   string title = 3;
   string message = 4;
-  int64 createdAt = 5; // Unix timestamp
+  int64 createdAt = 5;
 }
