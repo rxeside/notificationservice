@@ -1,0 +1,37 @@
+syntax = "proto3";
+package Notification;
+
+option go_package = "/.;notificationinternal";
+
+service NotificationInternalService {
+  // Метод для ручной отправки (или тестирования)
+  rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse);
+  // Получить историю уведомлений пользователя
+  rpc ListNotifications(ListNotificationsRequest) returns (ListNotificationsResponse);
+}
+
+message SendNotificationRequest {
+  string userID = 1;
+  string title = 2;
+  string message = 3;
+}
+
+message SendNotificationResponse {
+  string notificationID = 1;
+}
+
+message ListNotificationsRequest {
+  string userID = 1;
+}
+
+message ListNotificationsResponse {
+  repeated NotificationItem notifications = 1;
+}
+
+message NotificationItem {
+  string notificationID = 1;
+  string userID = 2;
+  string title = 3;
+  string message = 4;
+  int64 createdAt = 5; // Unix timestamp
+}

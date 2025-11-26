@@ -1,0 +1,93 @@
+services:
+  notificationservice:
+    image: notificationservice
+    container_name: notificationservice
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - service
+    ports:
+      - "8085:8081"
+    environment:
+      NOTIFICATION_DATABASE_HOST: notificationservice-db
+      NOTIFICATION_DATABASE_NAME: notificationservice_db
+      NOTIFICATION_DATABASE_USER: notificationservice
+      NOTIFICATION_DATABASE_PASSWORD: 12345Q
+    depends_on:
+      notificationservice-db:
+        condition: service_healthy
+    networks:
+      - notificationservice-net
+
+  notificationservice-message-handler:
+    image: notificationservice
+    container_name: notificationservice-message-handler
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      - message-handler
+    environment:
+      NOTIFICATION_DATABASE_HOST: notificationservice-db
+      NOTIFICATION_DATABASE_NAME: notificationservice_db
+      NOTIFICATION_DATABASE_USER: notificationservice
+      NOTIFICATION_DATABASE_PASSWORD: 12345Q
+
+      NOTIFICATION_AMQP_HOST: notificationservice-rmq
+      NOTIFICATION_AMQP_USER: guest
+      NOTIFICATION_AMQP_PASSWORD: guest
+    depends_on:
+      notificationservice-db:
+        condition: service_healthy
+      notificationservice-rmq:
+        condition: service_healthy
+    networks:
+      - notificationservice-net
+
+  notificationservice-db:
+    image: "mysql:8.3"
+    container_name: notificationservice-db
+    command: [ "--max_connections=100" ]
+    volumes:
+      - "notificationservice-db-data:/var/lib/mysql"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_DATABASE: notificationservice_db
+      MYSQL_USER: notificationservice
+      MYSQL_PASSWORD: 12345Q
+    ports:
+      - "3310:3306"
+    healthcheck:
+      test: mysql -h127.0.0.1 -uroot -e 'SELECT 1'
+      interval: 10s
+      timeout: 30s
+    networks:
+      - notificationservice-net
+
+  notificationservice-rmq:
+    image: "rabbitmq:4.2.0-management-alpine"
+    container_name: notificationservice-rmq
+    hostname: notificationservice-rmq
+    ports:
+      - "15676:15672"
+    volumes:
+      - "notificationservice-rmq-data:/var/lib/rabbitmq/mnesia"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    networks:
+      - notificationservice-net
+
+volumes:
+  notificationservice-db-data:
+  notificationservice-rmq-data:
+
+networks:
+  notificationservice-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.5.0/24
