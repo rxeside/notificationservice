@@ -30,7 +30,7 @@ type Database struct {
 }
 
 type AMQP struct {
-	Notification   string        `envconfig:"notification" required:"true"`
+	Notification   string        `envconfig:"user" required:"true"`
 	Password       string        `envconfig:"password" required:"true"`
 	Host           string        `envconfig:"host" required:"true"`
 	ConnectTimeout time.Duration `envconfig:"connect_timeout"`
